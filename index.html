@@ -699,6 +699,46 @@ body {
   [data-date].qa-preview-add { background: rgba(107,147,245,0.28) !important; }
   [data-date].qa-preview-remove { background: rgba(248,113,113,0.22) !important; }
 }
+
+/* === EXPORT DROPDOWN === */
+.export-wrap { position: relative; }
+
+.export-drop {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 4px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+  z-index: 200;
+  min-width: 180px;
+  overflow: hidden;
+}
+.export-drop.hidden { display: none; }
+
+.export-item {
+  display: block;
+  width: 100%;
+  padding: 9px 16px;
+  font-size: 13px;
+  font-weight: 500;
+  text-align: left;
+  background: none;
+  border: none;
+  color: var(--text);
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.1s;
+}
+.export-item:hover { background: var(--bg); }
+
+.export-divider { height: 1px; background: var(--border); margin: 2px 0; }
+
+@media (prefers-color-scheme: dark) {
+  .export-drop { box-shadow: 0 8px 24px rgba(0,0,0,0.4); }
+}
 </style>
 </head>
 <body>
@@ -731,6 +771,19 @@ body {
     </svg>
     Quick Add
   </button>
+  <div class="export-wrap">
+    <button class="qa-btn" id="exportBtn" title="Export / Import data">
+      Export &#9662;
+    </button>
+    <div class="export-drop hidden" id="exportDrop">
+      <button class="export-item" id="exportPdfBtn">Export PDF</button>
+      <div class="export-divider"></div>
+      <button class="export-item" id="exportJsonBtn">Backup JSON</button>
+      <button class="export-item" id="importJsonBtn">Restore JSON</button>
+    </div>
+  </div>
+  <a id="exportAnchor" style="display:none"></a>
+  <input type="file" accept=".json" id="importFileInput" style="display:none">
   <button class="settings-btn" id="settingsBtn" title="Settings">&#9881;</button>
 </header>
 
@@ -1394,6 +1447,20 @@ document.getElementById('settingsSave').addEventListener('click', () => {
 });
 
 // ─────────────────────────────────────────────
+// EXPORT DROPDOWN
+// ─────────────────────────────────────────────
+function closeExportDrop() {
+  document.getElementById('exportDrop').classList.add('hidden');
+}
+
+document.getElementById('exportBtn').addEventListener('click', e => {
+  e.stopPropagation();
+  document.getElementById('exportDrop').classList.toggle('hidden');
+});
+
+document.addEventListener('click', () => closeExportDrop());
+
+// ─────────────────────────────────────────────
 // NAVIGATION
 // ─────────────────────────────────────────────
 document.getElementById('yearPrev').addEventListener('click', () => { S.year--; persist(); render(); });
@@ -1413,7 +1480,7 @@ document.getElementById('monthNext').addEventListener('click', () => {
 
 // Global Escape
 document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') { closeDayModal(); closeSettings(); }
+  if (e.key === 'Escape') { closeDayModal(); closeSettings(); closeExportDrop(); }
 });
 
 // ─────────────────────────────────────────────
