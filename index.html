@@ -1470,6 +1470,34 @@ document.getElementById('exportJsonBtn').addEventListener('click', () => {
   a.click();
 });
 
+document.getElementById('importJsonBtn').addEventListener('click', () => {
+  closeExportDrop();
+  const input = document.getElementById('importFileInput');
+  input.value = '';
+  input.click();
+});
+
+document.getElementById('importFileInput').addEventListener('change', e => {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    let parsed;
+    try { parsed = JSON.parse(ev.target.result); } catch (_) {
+      alert('Invalid backup file.'); return;
+    }
+    if (!parsed || typeof parsed.settings !== 'object' || typeof parsed.holidays !== 'object') {
+      alert('Invalid backup file.'); return;
+    }
+    if (!confirm('This will replace your current holiday data. Continue?')) return;
+    S.settings = { ...DEFAULTS, ...parsed.settings };
+    S.holidays  = parsed.holidays;
+    persist();
+    render();
+  };
+  reader.readAsText(file);
+});
+
 // ─────────────────────────────────────────────
 // NAVIGATION
 // ─────────────────────────────────────────────
