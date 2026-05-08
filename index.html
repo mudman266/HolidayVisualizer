@@ -1460,6 +1460,16 @@ document.getElementById('exportBtn').addEventListener('click', e => {
 
 document.addEventListener('click', () => closeExportDrop());
 
+document.getElementById('exportJsonBtn').addEventListener('click', () => {
+  closeExportDrop();
+  const data = JSON.stringify({ settings: S.settings, holidays: S.holidays }, null, 2);
+  const url  = 'data:application/json;charset=utf-8,' + encodeURIComponent(data);
+  const a    = document.getElementById('exportAnchor');
+  a.href     = url;
+  a.download = 'holiday-backup.json';
+  a.click();
+});
+
 // ─────────────────────────────────────────────
 // NAVIGATION
 // ─────────────────────────────────────────────
